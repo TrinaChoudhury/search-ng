@@ -1,0 +1,13 @@
+<div class="content-container" #contentContainer>
+    <div *ngIf="noResultsFound">
+        <span> No Results found corresponding to your search </span>
+    </div>
+    <div *ngIf="results && results.length" class="images-container" (scroll)="onContainerScroll($event)">
+        <!-- <div (scroll)="onContainerScroll($event)">
+        </div> -->
+        <ng-container *ngFor="let img of results">
+            <app-image [model]="img"></app-image>
+        </ng-container>
+    </div>
+    <!-- <div class=""><ng-container #vc></ng-container></div> -->
+</div>

@@ -1,0 +1,9 @@
+<div class="img-container" (mouseover)="toggleDetails()" (mouseout)="toggleDetails()">
+    <div class="img-thumb-details" [hidden]="!showDetails">
+
+    </div>
+    <img [src]="squareMeta.url" [ngStyle]="{
+              'height.px': DEFAULT_IMG_PROPS.sqHeight,
+              'width.px': DEFAULT_IMG_PROPS.sqWidth
+          }"/>
+</div>
