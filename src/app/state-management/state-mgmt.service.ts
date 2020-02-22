@@ -15,9 +15,21 @@ export class StateMgmtService {
     private searchState : Subject<SearchQuery> = new Subject();
 
     private addNewSearchQuery (newQuery: SearchQuery) : void {
-        let searchSuggestions = window.localStorage.searchSuggestions ?
+        let searchSuggestions : Array<SearchQuery> = window.localStorage.searchSuggestions ?
             JSON.parse(window.localStorage.searchSuggestions) : [];
-        searchSuggestions.push(newQuery);
+        let index = searchSuggestions.findIndex((query) => query.content ===
+            newQuery.content);
+
+        if (index === undefined) {
+            if (searchSuggestions.length > 4) {
+                searchSuggestions.slice(0, searchSuggestions.length - 5);
+            }
+            searchSuggestions.push(newQuery);
+        } else {
+            searchSuggestions.splice(index, 1);
+            searchSuggestions.push(newQuery);
+        }
+
         window.localStorage.searchSuggestions = JSON.stringify(searchSuggestions);
     }
 
@@ -26,7 +38,8 @@ export class StateMgmtService {
      * @return {Array<SearchQuery>}
      */
     public getSearchSuggestions () : Array<SearchQuery> {
-        return <Array<SearchQuery>>JSON.parse(window.localStorage.searchSuggestions) || [];
+        return window.localStorage.searchSuggestions ?
+            <Array<SearchQuery>>JSON.parse(window.localStorage.searchSuggestions) : [];
     }
 
     /**

@@ -33,6 +33,8 @@ export class ContentComponent implements OnInit {
 
     @ViewChild('contentContainer', {read: ElementRef})
     public contentContainerRef : ElementRef;
+    @ViewChild('imgContainer', {read: ElementRef})
+    public imgContainerRef : ElementRef;
 
     public get noResultsFound () : boolean {
         return this.searching && !this.totalResults;
@@ -99,8 +101,8 @@ export class ContentComponent implements OnInit {
                     text: this.searchQuery.content,
                     page: this.currentPg.toString(),
                     format: 'json',
-                    'per_page': (75).toString(),
-                    'api_key': '4cb72a9e20f4fa05cfd6e99b8fd5b92a',
+                    'per_page': (this.pgSize).toString(),
+                    'api_key': '3e205a583e087ba296e4407f879e9933',
                     method: 'flickr.photos.search',
                     nojsoncallback: (1).toString(),
                     extras: 'count_comments,count_faves,description,owner_name,path_alias,realname,url_sq,url_q,url_t,url_s,url_n,url_w,url_m,url_z,url_c,url_l'
@@ -117,19 +119,17 @@ export class ContentComponent implements OnInit {
                 console.log(err);
             })
     }
-    public onContainerScroll (event: any) {
-        this.subscription.add((Observable.fromEvent(event, 'scroll')
-            .pipe(map((event: Event) => (<HTMLElement>event.target).scrollTop),
-            debounceTime(300)).subscribe((heightDisplaced : number) => {
-            if (heightDisplaced < DEFAULT_IMG_PROPERTIES.sqHeight) {
-                this.currentPg += 1;
-            } else {
-                this.currentPg = Math.floor(
-                    (heightDisplaced / DEFAULT_IMG_PROPERTIES.sqHeight)
-                    * this.totalRowsPerPage);
-            }
-            this.fetchResults();
-        })));
+
+    public onContainerScroll (event: Event) {
+        let heightDisplaced = (<HTMLElement>event.target).scrollTop;
+        if (heightDisplaced < DEFAULT_IMG_PROPERTIES.sqHeight) {
+            this.currentPg += 1;
+        } else {
+            this.currentPg = Math.floor(
+                (heightDisplaced / DEFAULT_IMG_PROPERTIES.sqHeight)
+                * this.totalRowsPerPage);
+        }
+        this.fetchResults();
     }
 
     ngOnInit() {
@@ -148,7 +148,12 @@ export class ContentComponent implements OnInit {
         this.totalRowsPerPage = Math.floor(this.contentContainerRef.nativeElement.clientHeight /
             DEFAULT_IMG_PROPERTIES.sqHeight);
             //See if max limit to pg size < this.pgSize if so show load more button
-        this.pgSize = this.imgPerRow * this.totalRowsPerPage;
+        this.pgSize = (this.imgPerRow * this.totalRowsPerPage) + this.imgPerRow;
+        this.subscription.add(
+            Observable.fromEvent(this.imgContainerRef.nativeElement, 'scroll')
+            .pipe(
+                debounceTime(300))
+            .subscribe(this.onContainerScroll.bind(this)));
     }
 
     ngOnDestroy() {

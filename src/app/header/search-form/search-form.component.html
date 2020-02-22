@@ -1,7 +1,7 @@
 <div class="search-container">
     <form id="searchForm"
         autocomplete="off"
-        #searchForm="ngForm"
+        [formGroup]="formGroup"
         (ngSubmit)="submit()"
         class="search-form">
         <div class="form-group">
@@ -9,23 +9,26 @@
                 name="searchQuery"
                 type="text"
                 placeholder="Search Photos..."
-                requireds
-                autofocus
+                role="search"
+                required
+                (focus)="showList = true"
                 (onkeyup)="onKeyUp($event)"
-                [(ngModel)]="searchString"
-                class="form-control">
+                [formControl]="searchFieldControl"
+                class="form-control fullWidth">
+            <span class="search-icon"><i class="fa fa-search" aria-hidden="true"></i></span>
+            <div class="search-suggestion-list" *ngIf="showList && suggestions.length > 0">
+                <ul class="list-group">
+                    <li class="list-group-item" *ngFor="let suggestion of suggestions" (click)="updateSearchField(suggestion)">
+                        <span>{{suggestion.content}}</span>
+                    </li>
+                </ul>
+            </div>
         </div>
 
-        <button class="btn btn-info btn-block " type="submit"
-            [disabled]="searchForm.form.invalid">
+        <!-- <button class="btn btn-info btn-block " type="submit"
+            [disabled]="formGroup.invalid">
             Search
-        </button>
+        </button> -->
+
     </form>
-    <div class="search-suggestion-list">
-        <ul class="list-group">
-            <li class="list-group-item" *ngFor="let suggestion of suggestions" (click)="updateSearchField(suggestion)">
-                <span>{{suggestion.content}}</span>
-            </li>
-        </ul>
-    </div>
 </div>

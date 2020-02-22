@@ -1,13 +1,15 @@
-<div class="content-container" #contentContainer>
-    <div *ngIf="noResultsFound">
-        <span> No Results found corresponding to your search </span>
+<div class="fullHeight">
+    <div class="count" [hidden]="!searching">Results Fetched : {{totalResults}}</div>
+    <div class="content-container" #contentContainer>
+        <div *ngIf="noResultsFound">
+            <span> No Results found corresponding to your search </span>
+        </div>
+        <div [hidden]="!results.length" class="images-container" #imgContainer
+            (scroll)="onContainerScroll($event)">
+            <ng-container *ngFor="let img of results">
+                <app-image [model]="img"></app-image>
+            </ng-container>
+        </div>
+        <!-- <div class=""><ng-container #vc></ng-container></div> -->
     </div>
-    <div *ngIf="results && results.length" class="images-container" (scroll)="onContainerScroll($event)">
-        <!-- <div (scroll)="onContainerScroll($event)">
-        </div> -->
-        <ng-container *ngFor="let img of results">
-            <app-image [model]="img"></app-image>
-        </ng-container>
-    </div>
-    <!-- <div class=""><ng-container #vc></ng-container></div> -->
 </div>

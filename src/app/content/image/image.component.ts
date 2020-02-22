@@ -5,7 +5,7 @@ import { Image, ImageMeta, DEFAULT_IMG_PROPERTIES } from '../../core/core';
 @Component({
   selector: 'app-image',
   templateUrl: './image.component.html',
-  styleUrls: ['./image.component.css'],
+  styleUrls: ['./image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImageComponent implements OnInit {

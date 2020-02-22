@@ -1,0 +1,24 @@
+.img-container {
+    position: relative;
+    display: inline-block;
+    float: left;
+    border: 5px solid transparent;
+    cursor: pointer;
+    .img-thumb-details {
+        position: absolute;
+        top: 110px;
+        height: 40px;
+        width: 100%;
+        div {
+            color: white;
+            font-size: 8px;
+            font-family: cursive;
+            .owner {
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
+.font10 {
+    font-size:10px;
+}

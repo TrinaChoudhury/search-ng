@@ -1,0 +1,45 @@
+.search-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    .search-form {
+        position: relative;
+        height: 100%;
+        width: 100%;
+        .form-group {
+            width: 30%;
+            margin: 8px auto;
+            display: table;
+            .form-control {
+                display: table-cell;
+            }
+            .search-icon {
+                display: table-cell;
+                font-size: 14px;
+                font-weight: normal;
+                line-height: 1;
+                color: #555;
+                text-align: center;
+                background-color: #eee;
+                border: 1px solid #ccc;
+                border-radius: 0px;
+                width: 5%;
+                padding: 4px 12px;
+                position: relative;
+            }
+            .search-suggestion-list {
+                display: table-row;
+                position: relative;
+                height: 150px;
+                width: 30%;
+                margin: 0px auto;
+                top: -8px;
+                overflow-y: hidden;
+                background: #fffefe;
+                li {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
