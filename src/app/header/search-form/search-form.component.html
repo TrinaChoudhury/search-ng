@@ -10,17 +10,18 @@
                 type="text"
                 placeholder="Search Photos..."
                 role="search"
-                required
                 (focus)="showList = true"
-                (onkeyup)="onKeyUp($event)"
-                [formControl]="searchFieldControl"
+                (blur)="showList = false"
+                formControlName="searchField"
                 class="form-control fullWidth">
             <span class="search-icon"><i class="fa fa-search" aria-hidden="true"></i></span>
             <div class="search-suggestion-list" *ngIf="showList && suggestions.length > 0">
                 <ul class="list-group">
-                    <li class="list-group-item" *ngFor="let suggestion of suggestions" (click)="updateSearchField(suggestion)">
-                        <span>{{suggestion.content}}</span>
-                    </li>
+                    <ng-container *ngFor="let suggestion of suggestions">
+                        <li class="list-group-item" (click)="updateSearchField(suggestion)" *ngIf="showSuggestion(suggestion)">
+                            <span>{{suggestion.content}}</span>
+                        </li>
+                    </ng-container>
                 </ul>
             </div>
         </div>

@@ -2,9 +2,8 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { StateMgmtService } from '../../state-management/state-mgmt.service';
 import { SearchQuery } from '../../core/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { of } from 'core-js/fn/array';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
@@ -15,7 +14,6 @@ import { Observable } from 'rxjs/Observable';
 })
 export class SearchFormComponent implements OnInit {
 
-    public suggestions: SearchQuery[];
     public searchFieldControl: FormControl;
     public formGroup: FormGroup;
     public showList = false;
@@ -27,14 +25,17 @@ export class SearchFormComponent implements OnInit {
         this.searchFieldControl.setValue(val);
     }
 
+    public get suggestions() : SearchQuery[] {
+        return this.stateMgmtService.getSearchSuggestions();
+    };
+
     constructor(private stateMgmtService: StateMgmtService) {
-        this.suggestions = this.stateMgmtService.getSearchSuggestions().reverse();
     }
 
-    public onKeyUp (event: any) {
-        if (event.keyCode === 13) {
-            this.submit();
-        }
+    public showSuggestion (suggestion: SearchQuery) : boolean {
+        //if search string is a substring of suggestion show it
+        // Empty search string use case is already included
+        return suggestion.content.indexOf(this.searchString) >= 0;
     }
 
     public updateSearchField (suggestion : SearchQuery) : void {
@@ -42,26 +43,30 @@ export class SearchFormComponent implements OnInit {
         this.showList = false;
     }
 
-    public submit () : Observable<SearchQuery> {
-        this.showList = false;
-        let currentSearchQuery : SearchQuery = {
-            content: this.searchString,
-            lastUsedOn: new Date()
-        };
-        this.stateMgmtService.updateState(currentSearchQuery);
-        return Observable.of(currentSearchQuery);
+    public submit () : void {
+        if (this.formGroup.valid) {
+            this.showList = false;
+            let currentSearchQuery : SearchQuery = {
+                content: this.searchString,
+                lastUsedOn: new Date()
+            };
+            this.stateMgmtService.updateState(currentSearchQuery);
+        }
     }
 
     ngOnInit() {
-        this.searchFieldControl = new FormControl({});
+        this.searchFieldControl = new FormControl('', [Validators.required, (control) => {
+            if (!control.value.trim().length) {
+                return { error: 'Invalid Value'}
+            }
+            return null;
+        }]);
+
         this.formGroup = new FormGroup({
             'searchField': this.searchFieldControl
         });
-        this.searchFieldControl.setValue('');
         this.searchFieldControl.valueChanges.pipe(
-            //distinctUntilChanged(),
             debounceTime(200)).subscribe(this.submit.bind(this));
-            //switchMap<void, SearchQuery>(this.submit.bind(this)));
     }
 
 

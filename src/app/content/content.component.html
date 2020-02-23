@@ -4,12 +4,14 @@
         <div *ngIf="noResultsFound">
             <span> No Results found corresponding to your search </span>
         </div>
-        <div [hidden]="!results.length" class="images-container" #imgContainer
-            (scroll)="onContainerScroll($event)">
-            <ng-container *ngFor="let img of results">
-                <app-image [model]="img"></app-image>
-            </ng-container>
-        </div>
+        <div class="images-container" #imgContainer>
+            <!-- Scrollable Div -->
+            <div class="images-content" [hidden]="!results.length">
+                <ng-container *ngFor="let img of results">
+                    <app-image [model]="img"></app-image>
+                </ng-container>
+            </div>
+        <div>
         <!-- <div class=""><ng-container #vc></ng-container></div> -->
     </div>
 </div>

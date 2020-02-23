@@ -15,21 +15,48 @@ export class StateMgmtService {
     private searchState : Subject<SearchQuery> = new Subject();
 
     private addNewSearchQuery (newQuery: SearchQuery) : void {
-        let searchSuggestions : Array<SearchQuery> = window.localStorage.searchSuggestions ?
-            JSON.parse(window.localStorage.searchSuggestions) : [];
-        let index = searchSuggestions.findIndex((query) => query.content ===
-            newQuery.content);
+        let searchSuggestions : Array<SearchQuery>, index : number;
 
-        if (index === undefined) {
-            if (searchSuggestions.length > 4) {
-                searchSuggestions.slice(0, searchSuggestions.length - 5);
+        /* Search Suggestion are sorted in the order of ASC last used */
+        searchSuggestions  =
+            window.localStorage.searchSuggestions ?
+            JSON.parse(window.localStorage.searchSuggestions) : [];
+        /*
+            First get the reverse order DESC last used, push new entry at last and
+            reverse again before storing in localStorage to have ASC last used
+         */
+        searchSuggestions = searchSuggestions.reverse();
+
+        /*
+            If existing any string is a substring or new one is a substring of older
+            value
+         */
+        index = searchSuggestions.findIndex((query) =>
+            newQuery.content.indexOf(query.content) >= 0 ||
+            query.content.indexOf(newQuery.content) >= 0);
+
+        /* If searchQuery not already present*/
+        if (index === -1) {
+            /* If searchSuggestions list already 4 , remove last element */
+            if (searchSuggestions.length === 4) {
+                searchSuggestions.splice(0, 1);
             }
             searchSuggestions.push(newQuery);
         } else {
-            searchSuggestions.splice(index, 1);
-            searchSuggestions.push(newQuery);
+            /*
+                Remove the earlier reference and push a new entry in the array at last
+                only if new query content's length is larger than older query
+                To avoid substrings
+            */
+
+            if (newQuery.content.length >= searchSuggestions[index].content.length) {
+                searchSuggestions.splice(index, 1);
+                searchSuggestions.push(newQuery);
+            }
         }
 
+        // (array is sorted (ASC last used on) before pushing to storage)
+        searchSuggestions = searchSuggestions.reverse();
         window.localStorage.searchSuggestions = JSON.stringify(searchSuggestions);
     }
 

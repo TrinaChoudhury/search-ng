@@ -24,5 +24,12 @@ export const DEFAULT_IMG_PROPERTIES = {
     thumbHeight: 100,
     thumbWidth: 100,
     sqHeight: 150,
-    sqWidth: 150
+    sqWidth: 150,
+    borderTop: 5,
+    borderLeft: 5
 };
+
+export type Size = {
+    height: number;
+    width: number;
+}
