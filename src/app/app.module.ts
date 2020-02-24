@@ -8,9 +8,13 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { ContentComponent } from './content/content.component';
 import { ImageComponent } from './content/image/image.component';
+import { ImageSummaryComponent } from './content/image/image-summary/image-summary.component';
 import { SearchFormComponent } from './header/search-form/search-form.component';
 import { StateMgmtService } from './state-management/state-mgmt.service';
-
+import { LoaderComponent } from './loader/loader.component';
+import { ModalComponent } from './modal/all';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { ModalService, DCL } from './adapters/all';
 
 @NgModule({
   declarations: [
@@ -18,15 +22,20 @@ import { StateMgmtService } from './state-management/state-mgmt.service';
     HeaderComponent,
     ContentComponent,
     ImageComponent,
-    SearchFormComponent
+    SearchFormComponent,
+    ModalComponent,
+    ImageSummaryComponent,
+    LoaderComponent
   ],
   imports: [
     BrowserModule,
+    ModalModule.forRoot(),
     CommonModule,
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [StateMgmtService],
+  providers: [StateMgmtService, DCL, ModalService],
+  entryComponents: [ModalComponent, ImageSummaryComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

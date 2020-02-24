@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { StateMgmtService } from '../state-management/state-mgmt.service';
 import { SearchQuery, Image, DEFAULT_IMG_PROPERTIES, Size } from '../core/core';
 
@@ -18,7 +18,7 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./content.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContentComponent implements OnInit {
+export class ContentComponent {
     private readonly IMG_LOAD = {
         offsetRows : 2,
         //Handle if its a mobile device extra rows can be lowered down, generate relation
@@ -28,7 +28,7 @@ export class ContentComponent implements OnInit {
 
     private subscription : Subscription = new Subscription();
     private currentSearchSubscription : Subscription;
-    private searching = false;
+    public searching = false;
     private searchQuery: SearchQuery;
 
     public results : Array<Image> = [];
@@ -108,7 +108,6 @@ export class ContentComponent implements OnInit {
         return this.searching && !this.totalResults;
     }
 
-
     constructor(private stateMgmtService: StateMgmtService, private http: HttpClient,
         private _cdRef: ChangeDetectorRef) { }
 
@@ -170,7 +169,7 @@ export class ContentComponent implements OnInit {
                     page: this.lastPageRendered.toString(),
                     format: 'json',
                     'per_page': (this.pgSize).toString(),
-                    'api_key': 'a223225e007d55519a8fd01ee56bd3df',
+                    'api_key': 'c758347432cea5808007f2d877919f65',
                     method: 'flickr.photos.search',
                     nojsoncallback: (1).toString(),
                     extras: 'count_comments,count_faves,description,owner_name,path_alias,realname,url_sq,url_q,url_t,url_s,url_n,url_w,url_m,url_z,url_c,url_l'
@@ -211,18 +210,18 @@ export class ContentComponent implements OnInit {
          */
         let offsetHeight = this.IMG_LOAD.offsetRows * this.rowHeight;
 
+        let x = (this.lastPageRendered - 1 >= 0) ? this.lastPageRendered - 1 : 0;
+
         /*
             If height traversed still falls inside the current Page Limit including the
             the offsetHeight no need to render another page
-            Or
-            If page was already rendered (Scrolling back)
          */
-        if (heightTraversed <= (this.pgHeight - offsetHeight)) {
+        if (heightTraversed >= ((this.pgHeight * <number>x) + (0.6 * this.pgHeight))) {
             // Page already rendered
-            return this.lastPageRendered;
+            return this.lastPageRendered + 1;
         }
 
-        return this.lastPageRendered + 1;
+        return this.lastPageRendered;
 
     }
 
