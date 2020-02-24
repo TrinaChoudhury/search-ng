@@ -1,9 +1,10 @@
-<div class="img-container" (mouseover)="toggleDetails()" (mouseout)="toggleDetails()">
+<div class="img-container" (mouseover)="toggleDetails()" (mouseout)="toggleDetails()"
+    (click)="showSummary()">
     <div class="img-thumb-details" *ngIf="showDetails">
         <div class="col-md-6 font10">{{model.title}}</div>
         <div class="col-md-6">
             <i class="fa fa-thumbs-up"></i>{{model.favCount}}
-            <i class="far fa-comment"></i>{{model.commentsCount}}
+            <i class="far fa-comment"></i>{{model.commentsCount || '0'}}
         </div>
         <div class="col-md-6 owner">by {{model.fullName}}</div>
     </div>

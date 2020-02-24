@@ -1,0 +1,27 @@
+<div class="img-summary-container">
+  <div class="img-holder">
+    <img [src]="fullSizeMeta.url" />
+  </div>
+  <div class="img-summary">
+    <div class="row">
+      <div class="col-md-8">
+        <h3><b>{{model.fullName}}</b></h3>
+      </div>
+      <div class="col-md-4">
+        <span class="pull-right">
+          <i class="fa fa-thumbs-up"></i>
+          <h4>{{model.favCount}}</h4>
+        </span>
+        <span class="pull-right">
+          <i class="far fa-comment"></i>
+          <h4>{{model.commentsCount}}</h4>
+        </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h5>{{model.description}}</h5>
+      </div>
+    </div>
+  </div>
+</div>

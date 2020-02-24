@@ -1,6 +1,8 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
-import { Image, ImageMeta, DEFAULT_IMG_PROPERTIES } from '../../core/core';
-
+import { Component, Input, ChangeDetectionStrategy, Inject } from '@angular/core';
+import {
+    Image, ImageMeta, DEFAULT_IMG_PROPERTIES, ModalEntityConfig
+} from '../../core/core';
+import {ModalService} from '../../adapters/all';
 
 @Component({
   selector: 'app-image',
@@ -8,7 +10,8 @@ import { Image, ImageMeta, DEFAULT_IMG_PROPERTIES } from '../../core/core';
   styleUrls: ['./image.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImageComponent implements OnInit {
+export class ImageComponent {
+
     readonly DEFAULT_IMG_PROPS = DEFAULT_IMG_PROPERTIES;
 
     public get thumbMeta () : ImageMeta {
@@ -20,15 +23,21 @@ export class ImageComponent implements OnInit {
 
     public showDetails : boolean = false;
 
+    @Input()
+    public model: Image;
+
+    constructor(private modalService : ModalService) { }
+
     public toggleDetails () {
         this.showDetails = !this.showDetails;
     }
 
-    constructor() { }
-
-    @Input() model: Image;
-
-    ngOnInit() {
-}
+    public showSummary () {
+        let config : ModalEntityConfig = {
+            internalEntitySelector: 'image-summary',
+            title: this.model.title
+        };
+        this.modalService.open(config, {'model': this.model});
+    }
 
 }

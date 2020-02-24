@@ -48,7 +48,6 @@ export class StateMgmtService {
                 only if new query content's length is larger than older query
                 To avoid substrings
             */
-
             if (newQuery.content.length >= searchSuggestions[index].content.length) {
                 searchSuggestions.splice(index, 1);
                 searchSuggestions.push(newQuery);

@@ -1,0 +1,21 @@
+<div class="modal-content modal-signature">
+    <div class="modal-header" *ngIf="title">
+        <h2 class="modal-title pull-left">
+            {{title}}
+        </h2>
+        <button type="button" class="close pull-right" aria-label="Close" [attr.automation-id]="'closeModalBtn'" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+        <div *ngIf="subTitle">
+            <small class="font-bold">
+        {{subtitle}}
+      </small>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div #target></div>
+    </div>
+    <!-- <div class="modal-footer">
+      &nbsp;&nbsp; &nbsp;&nbsp;
+  </div> -->
+</div>
