@@ -169,7 +169,7 @@ export class ContentComponent {
                     page: this.lastPageRendered.toString(),
                     format: 'json',
                     'per_page': (this.pgSize).toString(),
-                    'api_key': 'c758347432cea5808007f2d877919f65',
+                    'api_key': '2378e95fbd43b93f21fd4f7dfae6085a',
                     method: 'flickr.photos.search',
                     nojsoncallback: (1).toString(),
                     extras: 'count_comments,count_faves,description,owner_name,path_alias,realname,url_sq,url_q,url_t,url_s,url_n,url_w,url_m,url_z,url_c,url_l'
