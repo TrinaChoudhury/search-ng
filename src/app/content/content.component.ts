@@ -10,7 +10,17 @@ import {
     HttpResponse,
 } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
-import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { map, debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
+import { DataSource } from '../core/datasource';
+import { PhotoSearchAPIConfig } from './photos-search.api';
+import { HttpDataSource } from '../adapters/http/http-datasource.service';
+
+/**
+ * NOTE:
+ * The Flicker Search API doesnt return same number of images even when asked for a fixed
+ * page size.
+ * Due to this , the on scroll logic fails and leads to unexpected scroll delays and lag
+ */
 
 @Component({
   selector: 'content',
@@ -19,18 +29,25 @@ import { map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContentComponent {
+    // Both offsetRows, extraRowsOffset have been kept in percent to account to different
+    // screen sizes
     private readonly IMG_LOAD = {
-        offsetRows : 2,
-        //Handle if its a mobile device extra rows can be lowered down, generate relation
-        extraRows: 3,
+        // This is the portion that would be covered in lastPageRendered
+        // after which next page would be displayed
+        offsetRows : .3,
+        // This is the portion that would be added to all rows that could fit in screen
+        // to have some rows extra to what can be filled in the screen
+        extraRowsOffset: .4,
         maxImages: 100
     };
 
     private subscription : Subscription = new Subscription();
     private currentSearchSubscription : Subscription;
-    public searching = false;
     private searchQuery: SearchQuery;
+    private totalPages : number;
 
+    public showLoader = false;
+    public searching = false;
     public results : Array<Image> = [];
     /**
      * Number of results that the search fetched
@@ -41,6 +58,7 @@ export class ContentComponent {
     /**
      * Load more results button should be shown if max Image Limit has been achieved.
      * @return {boolean}
+     * [Not Implemented In View]
      */
     public get showLoadMore () : boolean {
         return this.lastPageRendered * this.rowsPerPage * this.imagesPerRow >
@@ -108,10 +126,14 @@ export class ContentComponent {
         return this.searching && !this.totalResults;
     }
 
-    constructor(private stateMgmtService: StateMgmtService, private http: HttpClient,
-        private _cdRef: ChangeDetectorRef) { }
+    constructor(private stateMgmtService: StateMgmtService, private datasource:
+        HttpDataSource, private _cdRef: ChangeDetectorRef) { }
 
-    public transform (photoArray : Array<any>) {
+    /*
+        Transformation Layer should also be seggregated out
+        from here and handled at datasouce level
+     */
+    public transform (photoArray : Array<any>) : void {
         photoArray.forEach((photo) => {
             this.results.push({
                 id: photo.id,
@@ -152,35 +174,35 @@ export class ContentComponent {
                     width: photo['width_o']
                 }
             })
-        })
+        });
     }
 
     /**
      * Function invoked to render next page
      */
     public renderPage () : void {
-
+        let dsConfig = Object.assign({}, PhotoSearchAPIConfig);
         this.lastPageRendered += 1;
+
+        dsConfig.params.query = Object.assign({}, dsConfig.params.query, {
+            text: this.searchQuery.content,
+            page: this.lastPageRendered.toString(),
+            'per_page': (this.pgSize).toString(),
+            'api_key': window.localStorage.api_key
+        });
+
         this.currentSearchSubscription =
-            this.http.get("https://www.flickr.com/services/rest/",
-            {
-                params: {
-                    text: this.searchQuery.content,
-                    page: this.lastPageRendered.toString(),
-                    format: 'json',
-                    'per_page': (this.pgSize).toString(),
-                    'api_key': '2378e95fbd43b93f21fd4f7dfae6085a',
-                    method: 'flickr.photos.search',
-                    nojsoncallback: (1).toString(),
-                    extras: 'count_comments,count_faves,description,owner_name,path_alias,realname,url_sq,url_q,url_t,url_s,url_n,url_w,url_m,url_z,url_c,url_l'
-                }
-            }).subscribe((resp: any) => {
+            this.datasource.get(dsConfig).subscribe((resp: any) => {
+                this.showLoader = false;
                 if (resp && resp.photos) {
                     this.totalResults = Number(resp.photos.total);
+                    this.totalPages = Number(resp.photos.pages);
                     this.transform(resp.photos.photo);
                     this._cdRef.detectChanges();
                 }
             }, (err) => {
+                this.showLoader = false;
+                this._cdRef.detectChanges();
                 console.log(err);
             });
     }
@@ -210,13 +232,13 @@ export class ContentComponent {
          */
         let offsetHeight = this.IMG_LOAD.offsetRows * this.rowHeight;
 
-        let x = (this.lastPageRendered - 1 >= 0) ? this.lastPageRendered - 1 : 0;
 
         /*
             If height traversed still falls inside the current Page Limit including the
             the offsetHeight no need to render another page
          */
-        if (heightTraversed >= ((this.pgHeight * <number>x) + (0.6 * this.pgHeight))) {
+        if (heightTraversed >= ((this.pgHeight * (this.lastPageRendered - 1)) +
+            (0.3 * this.pgHeight))) {
             // Page already rendered
             return this.lastPageRendered + 1;
         }
@@ -234,8 +256,14 @@ export class ContentComponent {
             }
             //Reset Values
             this.lastPageRendered = 0;
-            this.searching = true;
             this.results = [];
+            this.showLoader = true;
+            /*
+                View needs to be updated here to retain back the scrollTop to 0
+                as its a new search
+             */
+            this._cdRef.detectChanges();
+            this.searching = true;
             this.searchQuery = searchQuery;
             this.renderPage();
         });
@@ -245,9 +273,10 @@ export class ContentComponent {
 
         this.imagesPerRow = Math.floor(this.imagesContainerSize.width /
             this.colWidth);
-
-        this.rowsPerPage = Math.floor(this.imagesContainerSize.height /
-            this.rowHeight) + this.IMG_LOAD.extraRows;
+        let rowsInScreen = Math.floor(this.imagesContainerSize.height /
+            this.rowHeight);
+        this.rowsPerPage = rowsInScreen +
+            Math.ceil(rowsInScreen * this.IMG_LOAD.extraRowsOffset);
 
         //See if max limit to pg size < this.pgSize if so show load more button
         this.pgSize = (this.imagesPerRow * this.rowsPerPage);
@@ -256,7 +285,15 @@ export class ContentComponent {
         this.subscription.add(
             Observable.fromEvent<Event>(this.imgContainerRef.nativeElement, 'scroll')
             .pipe(
+                /* Kept to avoid unnecessary network call */
                 debounceTime(300),
+                /*
+                    Filter those scroll requests if last Page of the total Results
+                    have already been fetched
+                 */
+                filter((val) => {
+                    return this.lastPageRendered <= this.totalPages;
+                }),
                 map(
                     // This will determine which page to render based on scroll
                     this.getPgToRenderBasedOnScroll.bind(this)

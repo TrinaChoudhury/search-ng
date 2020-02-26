@@ -34,12 +34,12 @@ export class DCL {
         componentFactory = this.getComponentFactory(selector);
 
         compRef = viewRef.createComponent(componentFactory);
-        compRef.changeDetectorRef.detectChanges();
 
         Object.keys(inputs).forEach((key) => {
             compRef.instance[key] = inputs[key];
         });
 
+        compRef.changeDetectorRef.detectChanges();
         return compRef;
     }
 

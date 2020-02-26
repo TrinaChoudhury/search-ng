@@ -1,19 +1,37 @@
-.content-container {
-    position: absolute;
-    top: 35px;
-    left: 14px;
-    height: 500px;
-    width: calc(100% - 34px);
-    border: 1px solid #d6cece;
+.my-container {
+  background-color: rgba(21,21,23,.95);
+
+  .count {
+    padding    : 2px;
+    margin-left: 15px;
+    color      : white;
+    font-size  : 16px;
+    font-weight: bold;
+  }
+
+  .content-container {
+    position  : absolute;
+    top       : 50px;
+    left      : 14px;
+    height    : 500px;
+    width     : calc(100% - 34px);
+    border    : 1px solid #d6cece;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.2);
+
     .images-container {
-        position: relative;
-        height: 100%;
-        width: 100%;
-        top: 5px;
-        overflow-y: scroll;
-        .images-content {
-            position: absolute;
-        }
+      position  : relative;
+      height    : 100%;
+      width     : 100%;
+      //top: 5px;
+      overflow-y: auto;
+
+      .images-content {
+        position: absolute;
+      }
     }
+  }
+}
+
+.white-text {
+  color: white;
 }

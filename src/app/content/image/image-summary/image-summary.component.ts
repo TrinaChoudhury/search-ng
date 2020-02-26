@@ -4,7 +4,7 @@ import { Image, ImageMeta } from '../../../core/core';
 @Component({
   selector: 'image-summary',
   templateUrl: './image-summary.component.html',
-  styleUrls: ['./image-summary.component.css'],
+  styleUrls: ['./image-summary.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImageSummaryComponent implements OnInit {

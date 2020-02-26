@@ -1,0 +1,29 @@
+.img-summary-container {
+    .img-holder{
+        width: 91%;
+        margin-left: 25px;
+        height: 100%;
+        padding: 2px 1px;
+        border: 1px solid grey;
+        background-color: white;
+    }
+    img {
+        width: 100%;
+    }
+    .img-summary {
+        color: white;
+        margin: 2px 26px;
+        text-align: justify;
+        padding: 0px 15px;
+        border: 1px solid;
+    }
+    .row1 {
+        border: 1px solid grey;
+    }
+    span {
+        padding: 2px 4px;
+        i {
+            padding: 7px;
+        }
+    }
+}

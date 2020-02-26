@@ -31,7 +31,8 @@
     "path": "^0.12.7",
     "rxjs": "^5.5.6",
     "typescript": "~2.5.3",
-    "zone.js": "^0.8.19"
+    "zone.js": "^0.8.19",
+    "ngx-loading": "~1.0.14"
   },
   "devDependencies": {
     "@angular/language-service": "^5.2.0",

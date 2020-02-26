@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { LoadingModule } from 'ngx-loading';
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -14,7 +15,7 @@ import { StateMgmtService } from './state-management/state-mgmt.service';
 import { LoaderComponent } from './loader/loader.component';
 import { ModalComponent } from './modal/all';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { ModalService, DCL } from './adapters/all';
+import { ModalService, DCL, HttpDataSource } from './adapters/all';
 
 @NgModule({
   declarations: [
@@ -32,9 +33,10 @@ import { ModalService, DCL } from './adapters/all';
     ModalModule.forRoot(),
     CommonModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    LoadingModule
   ],
-  providers: [StateMgmtService, DCL, ModalService],
+  providers: [StateMgmtService, DCL, ModalService, HttpDataSource],
   entryComponents: [ModalComponent, ImageSummaryComponent],
   bootstrap: [AppComponent]
 })

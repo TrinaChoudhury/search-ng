@@ -13,11 +13,6 @@ export interface ModalEntityConfig {
     title?: string;
 
     /**
-     * Subtitle of Modal Header
-     */
-    subtitle?: string;
-
-    /**
      * Backdrop effect to be shown or not
      */
     backdrop?: boolean;

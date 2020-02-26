@@ -22,8 +22,6 @@ export class ModalComponent {
 
     public title: string;
 
-    public subTitle: string;
-
     public css: string;
 
     constructor(private modalService: ModalService, private componentLoader: DCL) {}
@@ -35,7 +33,6 @@ export class ModalComponent {
     public ngOnInit() {
         this.css = this.config.css || '';
         this.title = this.config.title || '';
-        this.subTitle = this.config.subtitle || '';
     }
 
     public ngAfterViewInit() {
