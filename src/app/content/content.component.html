@@ -1,19 +1,25 @@
 <div class="fullHeight my-container">
-    <div class="count" [hidden]="!searching || noResultsFound">
-        Results Fetched : {{totalResults}}
+  <div class="count"
+      [hidden]="!searching || noResultsFound">
+    Results Fetched : {{totalResults}}
+  </div>
+  <div class="content-container"
+      #contentContainer>
+    <div *ngIf="noResultsFound"
+        class="no-result">
+      <span> No Results found corresponding to your search </span>
     </div>
-    <div class="content-container" #contentContainer>
-        <div *ngIf="noResultsFound" class="no-result">
-            <span> No Results found corresponding to your search </span>
-        </div>
-        <div class="images-container" #imgContainer *ngIf="!noResultsFound">
-            <!-- Scrollable Div -->
-            <div class="images-content" [hidden]="!results.length">
-                <ng-container *ngFor="let img of results">
-                    <app-image [model]="img"></app-image>
-                </ng-container>
-            </div>
-        </div>
+    <div class="images-container"
+        #imgContainer
+        *ngIf="!noResultsFound">
+      <!-- Scrollable Div -->
+      <div class="images-content"
+          [hidden]="!results.length">
+        <ng-container *ngFor="let img of results">
+          <app-image [model]="img"></app-image>
+        </ng-container>
+      </div>
     </div>
-    <loader [show-loader]="showLoader"></loader>
+  </div>
+  <loader [show-loader]="showLoader"></loader>
 </div>

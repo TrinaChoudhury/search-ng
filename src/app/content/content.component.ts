@@ -27,7 +27,7 @@ export class ContentComponent {
     private readonly IMG_LOAD = {
         // This is the portion that would be covered in lastPageRendered
         // after which next page would be displayed
-        offsetRows : .3,
+        offsetRows : .2,
         // This is the portion that would be added to all rows that could fit in screen
         // to have some rows extra to what can be filled in the screen
         extraRowsOffset: .4,
@@ -38,6 +38,9 @@ export class ContentComponent {
     private currentSearchSubscription : Subscription;
     private searchQuery: SearchQuery;
     private totalPages : number;
+    // Holds height of scrollable container before next page is rendered
+    // therefore holds height of sum of lastPgRendered - 1 pages
+    private prevScrollableContainerHeight : number = 0;
 
     public showLoader = false;
     public searching = false;
@@ -183,7 +186,8 @@ export class ContentComponent {
             'per_page': (this.pgSize).toString(),
             'api_key': window.localStorage.api_key
         });
-
+        this.prevScrollableContainerHeight = this.imgContainerRef ?
+            this.imgContainerRef.nativeElement.firstElementChild.clientHeight : 0;
         this.currentSearchSubscription =
             this.datasource.get(dsConfig).subscribe((resp: any) => {
                 this.showLoader = false;
@@ -229,14 +233,14 @@ export class ContentComponent {
         // (this.pgHeight * (this.lastPageRendered - 1)
         // But due to inconsistent data received from Flicker api
         // Height of pages vary based on result returned from API
-        let heightTillSecondLastRenderedPg =
-            (Math.ceil((this.results.length / this.imagesPerRow) - 1)) * this.rowHeight;
+        let heightTillSecondLastRenderedPg = this.prevScrollableContainerHeight;
 
         /*
             If height traversed still falls inside the current Page Limit including the
             the offsetHeight no need to render another page
          */
-        if (heightTraversed >= (heightTillSecondLastRenderedPg + (0.3 * this.pgHeight))) {
+        if (heightTraversed >= (heightTillSecondLastRenderedPg +
+            (this.IMG_LOAD.offsetRows * this.pgHeight))) {
             // Page already rendered
             return this.lastPageRendered + 1;
         }
@@ -246,6 +250,7 @@ export class ContentComponent {
     }
 
     ngOnInit() {
+        this.prevScrollableContainerHeight = 0;
         this.stateMgmtService.getSearchState$().subscribe((searchQuery) => {
             //If multiple requests is being encountered, subscribe to the results fetched
             //by last emitted value
@@ -253,6 +258,7 @@ export class ContentComponent {
                 this.currentSearchSubscription.unsubscribe();
             }
             //Reset Values
+            this.prevScrollableContainerHeight = 0;
             this.lastPageRendered = 0;
             this.results = [];
             this.showLoader = true;
