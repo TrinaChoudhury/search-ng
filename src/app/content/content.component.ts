@@ -15,13 +15,6 @@ import { DataSource } from '../core/datasource';
 import { PhotoSearchAPIConfig } from './photos-search.api';
 import { HttpDataSource } from '../adapters/http/http-datasource.service';
 
-/**
- * NOTE:
- * The Flicker Search API doesnt return same number of images even when asked for a fixed
- * page size.
- * Due to this , the on scroll logic fails and leads to unexpected scroll delays and lag
- */
-
 @Component({
   selector: 'content',
   templateUrl: './content.component.html',
@@ -232,13 +225,18 @@ export class ContentComponent {
          */
         let offsetHeight = this.IMG_LOAD.offsetRows * this.rowHeight;
 
+        // Ideally it should have been directly set to:
+        // (this.pgHeight * (this.lastPageRendered - 1)
+        // But due to inconsistent data received from Flicker api
+        // Height of pages vary based on result returned from API
+        let heightTillSecondLastRenderedPg =
+            (Math.ceil((this.results.length / this.imagesPerRow) - 1)) * this.rowHeight;
 
         /*
             If height traversed still falls inside the current Page Limit including the
             the offsetHeight no need to render another page
          */
-        if (heightTraversed >= ((this.pgHeight * (this.lastPageRendered - 1)) +
-            (0.3 * this.pgHeight))) {
+        if (heightTraversed >= (heightTillSecondLastRenderedPg + (0.3 * this.pgHeight))) {
             // Page already rendered
             return this.lastPageRendered + 1;
         }

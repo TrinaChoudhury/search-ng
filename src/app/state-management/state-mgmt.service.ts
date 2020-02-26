@@ -25,7 +25,7 @@ export class StateMgmtService {
             First get the reverse order DESC last used, push new entry at last and
             reverse again before storing in localStorage to have ASC last used
          */
-        searchSuggestions = searchSuggestions.reverse();
+        //searchSuggestions = searchSuggestions.reverse();
 
         /*
             If existing any string is a substring or new one is a substring of older
@@ -39,9 +39,9 @@ export class StateMgmtService {
         if (index === -1) {
             /* If searchSuggestions list already 4 , remove last element */
             if (searchSuggestions.length === 4) {
-                searchSuggestions.splice(0, 1);
+                searchSuggestions.splice(searchSuggestions.length - 1, 1);
             }
-            searchSuggestions.push(newQuery);
+            searchSuggestions.splice(0, 0, newQuery);
         } else {
             /*
                 Remove the earlier reference and push a new entry in the array at last
@@ -50,12 +50,12 @@ export class StateMgmtService {
             */
             if (newQuery.content.length >= searchSuggestions[index].content.length) {
                 searchSuggestions.splice(index, 1);
-                searchSuggestions.push(newQuery);
+                searchSuggestions.splice(0, 0, newQuery);
             }
         }
 
         // (array is sorted (ASC last used on) before pushing to storage)
-        searchSuggestions = searchSuggestions.reverse();
+        //searchSuggestions = searchSuggestions.reverse();
         window.localStorage.searchSuggestions = JSON.stringify(searchSuggestions);
     }
 

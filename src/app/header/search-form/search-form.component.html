@@ -5,25 +5,27 @@
         (ngSubmit)="submit()"
         class="search-form">
         <div class="form-group">
-            <input id="searchQuery"
-                name="searchQuery"
-                type="text"
-                placeholder="Search Photos..."
-                role="search"
-                (focus)="showList = true"
-                formControlName="searchField"
-                class="form-control fullWidth">
-            <span class="search-icon" (click)="submit()"><i class="fa fa-search" aria-hidden="true"></i></span>
-            <div class="search-suggestion-list" [ngClass]="{
-                'hide': !showList || suggestions.length === 0
-            }" id="search-suggestion-list">
-                <ul class="list-group">
-                    <ng-container *ngFor="let suggestion of suggestions">
-                        <li class="list-group-item" (click)="updateSearchField(suggestion)" *ngIf="showSuggestion(suggestion)">
-                            <span>{{suggestion.content}}</span>
-                        </li>
-                    </ng-container>
-                </ul>
+            <div class="control-container">
+                <input id="searchQuery"
+                    name="searchQuery"
+                    type="text"
+                    placeholder="Search Photos..."
+                    role="search"
+                    (focus)="showList = true"
+                    formControlName="searchField"
+                    class="form-control fullWidth">
+                <span class="search-icon" (click)="submit()"><i class="fa fa-search" aria-hidden="true"></i></span>
+                <div class="search-suggestion-list" [ngClass]="{
+                    'hide': !showList || suggestions.length === 0
+                }" id="search-suggestion-list">
+                    <ul class="list-group">
+                        <ng-container *ngFor="let suggestion of suggestions">
+                            <li class="list-group-item" (click)="updateSearchField(suggestion)" *ngIf="showSuggestion(suggestion)">
+                                <span>{{suggestion.content}}</span>
+                            </li>
+                        </ng-container>
+                    </ul>
+                </div>
             </div>
         </div>
 

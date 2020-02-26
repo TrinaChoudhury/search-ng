@@ -15,10 +15,14 @@ export class AppComponent {
     }
 
     ngAfterViewInit () {
-        document.body.addEventListener("onclick", (evt: Event) => {
-            let suggessionListElem = document.getElementById('search-suggestion-list');
-            if (suggessionListElem && suggessionListElem !== evt.target) {
+        document.body.addEventListener("click", (evt: Event) => {
+            let suggessionListElem = document.getElementById('search-suggestion-list'),
+                searchQueryField = document.getElementById('searchQuery');
+            if ((suggessionListElem && suggessionListElem !== evt.target) &&
+                evt.target !== searchQueryField) {
                 suggessionListElem.classList.add('hide');
+            } else {
+                suggessionListElem.classList.remove('hide');
             }
         })
     }

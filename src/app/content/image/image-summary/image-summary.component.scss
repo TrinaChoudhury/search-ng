@@ -16,6 +16,10 @@
         text-align: justify;
         padding: 0px 15px;
         border: 1px solid;
+        background-color: black;
+        h5 {
+            overflow-wrap: break-word;
+        }
     }
     .row1 {
         border: 1px solid grey;
